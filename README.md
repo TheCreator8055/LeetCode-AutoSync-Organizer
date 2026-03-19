@@ -59,13 +59,9 @@ leetcode-auto-sync
 ├── .github
 │   └── workflows
 │       └── leetcode-sync.yml
-│
-├── scripts
-│   ├── organize.py
-│   └── update_readme.py
-│
-├── sample-output
-│   └── README-preview.md
+│   └── scripts
+|        ├── organize.py
+|        └── update_readme.py
 │
 └── README.md
 ```
@@ -93,8 +89,8 @@ Create a new GitHub repository (empty).
 Copy these into your repo:
 
 * `.github/workflows/leetcode-sync.yml`
-* `scripts/organize.py`
-* `scripts/update_readme.py`
+* `.github/scripts/organize.py`
+* `.github/scripts/update_readme.py`
 
 ---
 
@@ -138,6 +134,175 @@ That’s it. The system will:
 * push updates automatically
 
 ---
+
+## ⚠️ Common Issues & Fixes
+
+During setup, you may encounter some common errors. Here are the fixes for the most frequent ones:
+
+---
+
+### 1. ❌ Script Not Found
+
+**Error:**
+
+```text
+python: can't open file 'scripts/update_readme.py'
+```
+
+**Fix:**
+
+* Ensure your scripts are inside the correct folder:
+
+```text
+scripts/
+```
+
+* Verify workflow path:
+
+```yaml
+run: python scripts/update_readme.py
+```
+
+---
+
+### 2. ❌ Push Rejected (Fetch First)
+
+**Error:**
+
+```text
+failed to push some refs
+```
+
+**Fix:**
+Update your commit step in workflow:
+
+```bash
+git add .
+git commit -m "Auto update" || echo "No changes"
+git pull --rebase origin main
+git push
+```
+
+---
+
+### 3. ❌ Cannot Pull with Rebase
+
+**Error:**
+
+```text
+cannot pull with rebase: You have unstaged changes
+```
+
+**Fix:**
+Commit changes before pulling:
+
+```bash
+git add .
+git commit -m "update"
+git pull --rebase origin main
+```
+
+---
+
+### 4. ❌ Scripts Not Running After Sync
+
+**Cause:**
+LeetCode sync action may overwrite repository contents.
+
+**Fix:**
+Store scripts safely inside:
+
+```text
+.github/scripts/
+```
+
+Update workflow:
+
+```yaml
+run: python .github/scripts/organize.py
+run: python .github/scripts/update_readme.py
+```
+
+---
+
+### 5. ❌ Problems Going to `misc` Folder
+
+**Cause:**
+Topic keyword not detected.
+
+**Fix:**
+Add more keywords in `organize.py`:
+
+```python
+"integer": "13-math",
+"roman": "13-math",
+"sum": "02-two-pointers",
+"parentheses": "04-stack"
+```
+
+---
+
+### 6. ❌ README Shows 0 Problems
+
+**Cause:**
+Script is checking for files, but problems are stored as folders.
+
+**Fix:**
+Replace:
+
+```python
+os.path.isfile(...)
+```
+
+with:
+
+```python
+os.path.isdir(...)
+```
+
+---
+
+### 7. ❌ Workflow Runs but No Changes Appear
+
+**Possible Reasons:**
+
+* No new problems solved
+* No changes detected in repo
+
+This is expected behavior.
+
+---
+
+### 8. ❌ Workflow Not Triggering
+
+**Fix:**
+
+* Ensure workflow file is inside:
+
+```text
+.github/workflows/
+```
+
+* Trigger manually:
+
+```text
+Actions → LeetCode Sync → Run Workflow
+```
+
+---
+
+## 💡 Tip
+
+If something doesn’t work:
+
+* Check GitHub Actions logs
+* Verify file paths carefully
+* Ensure secrets are correctly added
+
+Most issues are caused by small misconfigurations.
+
+---
+
 
 ## 📊 Sample Output
 
@@ -190,7 +355,7 @@ Total Problems Solved: 50
 
 Check a working implementation here:
 
-👉 https://github.com/yourusername/leetcode-solutions
+👉 https://github.com/TheCreator8055/LeetCode-Programs
 
 ---
 
